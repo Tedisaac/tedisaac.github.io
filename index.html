@@ -671,11 +671,11 @@
     <header id="home">
         <div class="container">
             <div class="hero-content">
-                <div class="hero-label">Senior Android Engineer</div>
+                <div class="hero-label">Mobile App Engineer</div>
                 <h1>ISAAC TED</h1>
-                <p class="hero-subtitle">Fintech & NFC Payment Systems Specialist</p>
+                <p class="hero-subtitle">Android & Multiplatform Mobile Engineer</p>
                 <p class="hero-description">
-                    Building secure, revenue-generating mobile solutions that enable financial inclusion across East Africa. Expert in NFC, POS systems, and scalable Android architecture.
+                    From NFC payment systems and agricultural platforms to ride-hailing, logistics, and beyond — I build mobile apps that solve real-world problems. Experienced in Kotlin, Flutter, and scalable architecture across diverse industries.
                 </p>
                 <div class="cta-buttons">
                     <a href="#contact" class="btn btn-primary">Let's Connect</a>
@@ -695,11 +695,11 @@
                     <div class="stat-label">Years Experience</div>
                 </div>
                 <div class="stat-card reveal">
-                    <div class="stat-number">500K+</div>
+                    <div class="stat-number">1M+</div>
                     <div class="stat-label">Users Served</div>
                 </div>
                 <div class="stat-card reveal">
-                    <div class="stat-number">10+</div>
+                    <div class="stat-number">5+</div>
                     <div class="stat-label">Apps Launched</div>
                 </div>
                 <div class="stat-card reveal">
@@ -715,9 +715,9 @@
         <div class="container">
             <div class="section-header reveal">
                 <div class="section-label">About Me</div>
-                <h2 class="section-title">Building the Future of Mobile Payments</h2>
+                <h2 class="section-title">Turning Ideas Into Mobile Products</h2>
                 <p class="section-description">
-                    I specialize in creating production-ready Android applications with a focus on fintech, payment processing, and NFC technology. With proven experience driving revenue growth and operational efficiency, I bring both technical expertise and business impact.
+                    I'm a mobile engineer who builds production-ready apps using Kotlin (Android) and Flutter (multiplatform). My work spans fintech and NFC payments, ride-hailing, logistics, real estate, fleet management, and security systems. I focus on writing clean, scalable code that solves real problems and drives measurable business results.
                 </p>
             </div>
         </div>
@@ -734,11 +734,12 @@
                 <div class="skill-category reveal">
                     <h3>Mobile Development</h3>
                     <div class="skill-tags">
+                        <span class="skill-tag">Flutter</span>
                         <span class="skill-tag">Kotlin</span>
                         <span class="skill-tag">Java</span>
                         <span class="skill-tag">Android SDK/NDK</span>
                         <span class="skill-tag">Jetpack Compose</span>
-                        <span class="skill-tag">MVVM/MVI</span>
+                        <span class="skill-tag">MVVM/MVI/MVC</span>
                         <span class="skill-tag">Coroutines</span>
                         <span class="skill-tag">Flow</span>
                         <span class="skill-tag">Dagger Hilt</span>
@@ -779,6 +780,8 @@
                         <span class="skill-tag">JUnit/Mockito</span>
                         <span class="skill-tag">Jira</span>
                         <span class="skill-tag">Android Studio</span>
+                        <span class="skill-tag">Visual Studio Code</span>
+                        <span class="skill-tag">IntelliJ</span>
                     </div>
                 </div>
             </div>
@@ -806,8 +809,7 @@
                             <span class="tech-badge">EMV</span>
                         </div>
                         <div class="project-links">
-                            <a href="https://play.google.com/store/apps/details?id=com.touristtap" target="_blank">Play Store →</a>
-                            <a href="https://github.com/Tedisaac/tourist-tap" target="_blank">GitHub →</a>
+                            <a href="https://play.google.com/store/search?q=Tourist%20Tap&c=apps" target="_blank">Play Store →</a>
                         </div>
                     </div>
                 </div>
@@ -825,7 +827,6 @@
                             <span class="tech-badge">Offline-First</span>
                         </div>
                         <div class="project-links">
-                            <a href="https://github.com/Tedisaac/e-voucher-demo" target="_blank">View Demo →</a>
                         </div>
                     </div>
                 </div>
@@ -843,7 +844,6 @@
                             <span class="tech-badge">PCI DSS</span>
                         </div>
                         <div class="project-links">
-                            <a href="#contact">Request Access →</a>
                         </div>
                     </div>
                 </div>
@@ -861,7 +861,8 @@
                             <span class="tech-badge">Firebase</span>
                         </div>
                         <div class="project-links">
-                            <a href="https://play.google.com/store/apps/details?id=com.littlecab.rider" target="_blank">Play Store →</a>
+                            <a href="https://play.google.com/store/apps/details?id=com.craftsilicon.littlecabrider" target="_blank">Little Cab →</a>
+                            <a href="https://play.google.com/store/apps/details?id=com.craftsilicon.littlecabdriver" target="_blank">Little Agent →</a>
                         </div>
                     </div>
                 </div>
@@ -894,7 +895,7 @@
 
                 <div class="timeline-item reveal">
                     <div class="timeline-content">
-                        <div class="timeline-date">December 2024 - Present</div>
+                        <div class="timeline-date">December 2024 - January 2026</div>
                         <h3>Android Engineer Consultant (Remote)</h3>
                         <h4>Kifiya Financial Technology | Addis Ababa, Ethiopia</h4>
                         <ul>
@@ -1026,26 +1027,24 @@
                 const target = stat.textContent;
                 const isPercentage = target.includes('%');
                 const isPlus = target.includes('+');
+                const isMillion = target.includes('M');
+                const isK = target.includes('K');
                 const number = parseInt(target.replace(/[^0-9]/g, ''));
-                const suffix = isPercentage ? '%' : (isPlus ? '+' : '');
-                
+                const suffix = (isMillion ? 'M' : isK ? 'K' : '') + (isPlus ? '+' : '') + (isPercentage ? '%' : '');
+
                 let current = 0;
                 const increment = number / 50;
                 const duration = 2000;
                 const stepTime = duration / 50;
-                
+
                 const timer = setInterval(() => {
                     current += increment;
                     if (current >= number) {
                         current = number;
                         clearInterval(timer);
                     }
-                    
-                    if (number >= 1000) {
-                        stat.textContent = Math.floor(current / 1000) + 'K' + suffix;
-                    } else {
-                        stat.textContent = Math.floor(current) + suffix;
-                    }
+
+                    stat.textContent = Math.floor(current) + suffix;
                 }, stepTime);
             });
         };
