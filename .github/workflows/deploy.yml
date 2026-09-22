@@ -1,0 +1,65 @@
+name: Deploy portfolio
+
+# Push to main -> the two files land on the server. Nothing else moves.
+#
+# It connects as `isaacted`, a dedicated account with NO sudo and NO docker
+# group, and the key is further locked on the server to
+# `rrsync /srv/isaacted/public` (a forced command in authorized_keys). So the
+# key cannot open a shell, cannot escalate, and cannot write anywhere outside
+# that one directory - which is what keeps Chekit and Carniva on the same box
+# out of reach even if the key leaks. See deploy/DEPLOY.md.
+#
+# Required repo secrets:
+#   DEPLOY_HOST         server IP
+#   DEPLOY_SSH_KEY      private half of the deploy keypair (ed25519)
+#   DEPLOY_KNOWN_HOSTS  `ssh-keyscan -t ed25519 <host>` output - PINNED, so a
+#                       MITM cannot impersonate the server mid-deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-portfolio
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        run: |
+          set -euo pipefail
+          install -d -m 700 ~/.ssh
+          install -m 600 /dev/null ~/.ssh/id_ed25519
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          # Pinned host key, NOT a runtime ssh-keyscan: scanning at deploy time
+          # trusts whatever answers on the day, which is what pinning prevents.
+          printf '%s\n' "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Publish
+        run: |
+          set -euo pipefail
+          # --delete keeps the server matching the repo, so a file removed here
+          # disappears there too. It is safe because rrsync confines every path
+          # to /srv/isaacted/public - it cannot delete outside that directory.
+          rsync -az --delete \
+            --exclude '.git' --exclude '.github' --exclude '.idea' \
+            --exclude 'deploy' \
+            -e "ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o BatchMode=yes" \
+            ./ isaacted@${{ secrets.DEPLOY_HOST }}:
+
+      - name: Verify it is actually serving
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 5); do
+            if curl -fsS --max-time 10 -o /dev/null -w '%{http_code}' https://isaacted.dev/ | grep -q '^200$'; then
+              echo "live"; exit 0
+            fi
+            echo "attempt $i: not serving yet"; sleep 10
+          done
+          echo "isaacted.dev did not return 200"; exit 1
