@@ -41,6 +41,22 @@ jobs:
           printf '%s\n' "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
+          # Fail HERE, with a readable message, rather than 30 lines later as
+          # "Host key verification failed" inside rsync. The usual mistake is
+          # pasting the `ssh-keygen -lf` FINGERPRINT (SHA256:...) into the
+          # secret instead of the raw `ssh-keyscan` line.
+          if ! grep -q 'ssh-ed25519 AAAA' ~/.ssh/known_hosts; then
+            echo "DEPLOY_KNOWN_HOSTS is empty or malformed." >&2
+            echo "It must be the full output of:  ssh-keyscan -t ed25519 <host>" >&2
+            echo "i.e. '<host> ssh-ed25519 AAAAC3NzaC1...', not a SHA256 fingerprint." >&2
+            exit 1
+          fi
+          if ! grep -q 'BEGIN OPENSSH PRIVATE KEY' ~/.ssh/id_ed25519; then
+            echo "DEPLOY_SSH_KEY is empty or is not a private key." >&2
+            echo "Paste the whole ~/.ssh/isaacted-deploy file (NOT the .pub)." >&2
+            exit 1
+          fi
+
       - name: Publish
         run: |
           set -euo pipefail
